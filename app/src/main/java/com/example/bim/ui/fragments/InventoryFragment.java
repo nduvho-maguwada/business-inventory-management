@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,6 +31,9 @@ public class InventoryFragment extends Fragment {
     private List<Product> productList;
     private FloatingActionButton fabAddProduct;
 
+    // Metrics TextViews
+    private TextView tvTotalProducts, tvLowStock, tvInventoryValue;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -42,26 +46,50 @@ public class InventoryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         dbHelper = new DatabaseHelper(getContext());
-        recyclerView = view.findViewById(R.id.recyclerViewProducts);
-        fabAddProduct = view.findViewById(R.id.fabAddProduct);
 
+        // RecyclerView
+        recyclerView = view.findViewById(R.id.recyclerViewProducts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        loadProducts();
-
+        // FAB
+        fabAddProduct = view.findViewById(R.id.fabAddProduct);
         fabAddProduct.setOnClickListener(v -> showAddProductDialog());
+
+        // Metrics
+        tvTotalProducts = view.findViewById(R.id.tvTotalProducts);
+        tvLowStock = view.findViewById(R.id.tvLowStock);
+        tvInventoryValue = view.findViewById(R.id.tvInventoryValue);
+
+        loadProducts();
     }
 
     private void loadProducts() {
         productList = dbHelper.getAllProducts();
-        productAdapter = new ProductAdapter(productList, new ProductAdapter.OnItemLongClickListener() {
-            @Override
-            public void onItemLongClick(int position) {
-                Product product = productList.get(position);
-                showProductOptionsDialog(product);
-            }
-        });
-        recyclerView.setAdapter(productAdapter);
+
+        // Adapter
+        if (productAdapter == null) {
+            productAdapter = new ProductAdapter(productList, position -> showProductOptionsDialog(productList.get(position)));
+            recyclerView.setAdapter(productAdapter);
+        } else {
+            productAdapter.notifyDataSetChanged();
+        }
+
+        updateMetrics();
+    }
+
+    private void updateMetrics() {
+        int totalProducts = productList.size();
+        int lowStock = 0;
+        double inventoryValue = 0;
+
+        for (Product p : productList) {
+            if (p.getStock() < 5) lowStock++;
+            inventoryValue += p.getStock() * p.getPrice();
+        }
+
+        tvTotalProducts.setText(String.valueOf(totalProducts));
+        tvLowStock.setText(String.valueOf(lowStock));
+        tvInventoryValue.setText("R" + String.format("%.2f", inventoryValue));
     }
 
     private void showAddProductDialog() {
@@ -96,16 +124,11 @@ public class InventoryFragment extends Fragment {
                         return;
                     }
 
-                    // Use selling price as default costPrice for now
                     Product product = new Product(0, name, price, price, stock, category);
                     dbHelper.addProduct(product);
                     loadProducts();
 
-                    if (stock < 5) {
-                        Toast.makeText(getContext(), "Low stock alert!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Product added", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(getContext(), stock < 5 ? "Low stock alert!" : "Product added", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();
@@ -116,11 +139,8 @@ public class InventoryFragment extends Fragment {
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle(product.getName())
                 .setItems(options, (dialog, which) -> {
-                    if (which == 0) {
-                        showEditProductDialog(product);
-                    } else if (which == 1) {
-                        deleteProduct(product);
-                    }
+                    if (which == 0) showEditProductDialog(product);
+                    else if (which == 1) deleteProduct(product);
                 }).show();
     }
 
@@ -165,15 +185,10 @@ public class InventoryFragment extends Fragment {
                     product.setPrice(price);
                     product.setStock(stock);
                     product.setCategory(category);
-                    // Keep costPrice same as before
                     dbHelper.updateProduct(product);
-                    loadProducts();
 
-                    if (stock < 5) {
-                        Toast.makeText(getContext(), "Low stock alert!", Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(getContext(), "Product updated", Toast.LENGTH_SHORT).show();
-                    }
+                    loadProducts();
+                    Toast.makeText(getContext(), stock < 5 ? "Low stock alert!" : "Product updated", Toast.LENGTH_SHORT).show();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .show();

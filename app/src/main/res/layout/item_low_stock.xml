@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="6dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
     android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
@@ -18,7 +18,7 @@
 
         <!-- Product Name -->
         <TextView
-            android:id="@+id/tvSaleProductName"
+            android:id="@+id/tvLowStockProductName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Product Name"
@@ -28,34 +28,43 @@
             android:ellipsize="end"
             android:maxLines="1"/>
 
-        <!-- Quantity and Total Row -->
+        <!-- Category -->
+        <TextView
+            android:id="@+id/tvLowStockCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Category: None"
+            android:textSize="14sp"
+            android:textColor="@color/colorTextSecondary"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Stock Left -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:weightSum="2">
 
             <TextView
-                android:id="@+id/tvSaleQuantity"
+                android:id="@+id/tvLowStockQuantity"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Qty: 0"
+                android:text="Stock: 0"
                 android:textSize="14sp"
-                android:textColor="@color/colorTextSecondary"/>
+                android:textColor="@color/colorLowStock"
+                android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/tvSaleTotal"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total: R0.00"
-                android:textSize="14sp"
-                android:textColor="@color/colorAccent"
-                android:gravity="end"/>
+            <ImageView
+                android:id="@+id/ivLowStockIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_low_stock"
+                app:tint="@color/colorLowStock"
+                android:layout_gravity="end"/>
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

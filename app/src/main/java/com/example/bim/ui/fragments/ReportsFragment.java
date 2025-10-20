@@ -73,7 +73,6 @@ public class ReportsFragment extends Fragment {
 
         dbHelper = new DatabaseHelper(getContext());
 
-        // Setup spinner
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
                 getContext(),
                 R.array.graph_types,
@@ -162,13 +161,23 @@ public class ReportsFragment extends Fragment {
 
         LineDataSet dataSet = new LineDataSet(entries, "Sales");
         dataSet.setColor(getResources().getColor(R.color.colorPrimary));
+        dataSet.setCircleColor(getResources().getColor(R.color.colorAccent));
+        dataSet.setLineWidth(2f);
+        dataSet.setCircleRadius(5f);
         dataSet.setValueTextColor(getResources().getColor(R.color.colorTextPrimary));
+        dataSet.setValueTextSize(10f);
+        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+        dataSet.setDrawFilled(true);
+        dataSet.setFillColor(getResources().getColor(R.color.colorPrimary));
 
         LineData lineData = new LineData(dataSet);
         lineChart.setData(lineData);
 
-        XAxis xAxis = lineChart.getXAxis(); // or barChart.getXAxis()
+        XAxis xAxis = lineChart.getXAxis();
         xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextColor(getResources().getColor(R.color.colorTextSecondary));
         xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -177,8 +186,11 @@ public class ReportsFragment extends Fragment {
             }
         });
 
-
-
+        lineChart.getAxisLeft().setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        lineChart.getAxisRight().setEnabled(false);
+        lineChart.getDescription().setEnabled(false);
+        lineChart.getLegend().setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        lineChart.animateY(1000);
         lineChart.invalidate();
     }
 
@@ -196,12 +208,17 @@ public class ReportsFragment extends Fragment {
         BarDataSet dataSet = new BarDataSet(entries, "Sales");
         dataSet.setColor(getResources().getColor(R.color.colorPrimary));
         dataSet.setValueTextColor(getResources().getColor(R.color.colorTextPrimary));
+        dataSet.setValueTextSize(10f);
 
         BarData barData = new BarData(dataSet);
+        barData.setBarWidth(0.6f);
         barChart.setData(barData);
 
         XAxis xAxis = barChart.getXAxis();
         xAxis.setGranularity(1f);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setDrawGridLines(false);
+        xAxis.setTextColor(getResources().getColor(R.color.colorTextSecondary));
         xAxis.setValueFormatter(new com.github.mikephil.charting.formatter.ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -210,8 +227,11 @@ public class ReportsFragment extends Fragment {
             }
         });
 
-
-
+        barChart.getAxisLeft().setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getDescription().setEnabled(false);
+        barChart.getLegend().setTextColor(getResources().getColor(R.color.colorTextPrimary));
+        barChart.animateY(1000);
         barChart.invalidate();
     }
 
@@ -240,17 +260,23 @@ public class ReportsFragment extends Fragment {
             salesList = dbHelper.getAllSales();
         }
 
+        if (salesList.isEmpty()) {
+            Toast.makeText(getContext(), "No sales to export", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        try {
-            FileWriter writer = new FileWriter(getContext().getFilesDir() + "/sales.csv");
+        String fileName = "sales_" + System.currentTimeMillis() + ".csv";
+        java.io.File file = new java.io.File(requireContext().getExternalFilesDir(null), fileName);
+
+        try (FileWriter writer = new FileWriter(file)) {
             writer.append("ProductID,Quantity,Total,Date\n");
             for (Sale s : salesList) {
                 writer.append(s.getProductId() + "," + s.getQuantity() + "," +
                         s.getTotal() + "," + sdf.format(new Date(s.getSaleDate())) + "\n");
             }
             writer.flush();
-            writer.close();
-            Toast.makeText(getContext(), "CSV exported!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "CSV exported to: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(getContext(), "Export failed", Toast.LENGTH_SHORT).show();
