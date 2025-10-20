@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Inventory box (white) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,16 L56,16 L56,48 L8,48 Z"/>
+
+    <!-- Up arrow (orange) -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M32,8 L32,36 M32,8 L24,16 M32,8 L40,16"/>
+</vector>

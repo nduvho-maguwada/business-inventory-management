@@ -1,0 +1,24 @@
+<resources>
+    <!-- Primary app colors -->
+    <color name="colorPrimary">#1976D2</color>
+    <color name="colorPrimaryDark">#1565C0</color>
+    <color name="colorAccent">#FF9800</color>
+
+    <!-- Backgrounds -->
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorCardBackground">#FFFFFF</color>
+
+    <!-- Text colors -->
+    <color name="colorTextPrimary">#212121</color>
+    <color name="colorTextSecondary">#757575</color>
+    <color name="colorTextAccent">#FF5722</color>
+
+    <!-- Low stock alert color -->
+    <color name="colorLowStock">#D32F2F</color>
+    <!-- Toolbar and BottomNavigation -->
+    <color name="colorToolbar">#1976D2</color>
+    <color name="colorBottomNav">#FFFFFF</color>
+    <color name="colorAlert">#D32F2F</color>
+
+    <color name="colorDivider">#BDBDBD</color>
+</resources>
