@@ -29,7 +29,6 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Inflate the modern dashboard layout
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
 
@@ -38,8 +37,6 @@ public class DashboardFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         dbHelper = new DatabaseHelper(getContext());
-
-        // Bind all the TextViews
         tvTotalProducts = view.findViewById(R.id.tvTotalProducts);
         tvProductNames = view.findViewById(R.id.tvProductNames);
         tvTotalSales = view.findViewById(R.id.tvTotalSales);
@@ -51,22 +48,18 @@ public class DashboardFragment extends Fragment {
     }
 
     private void loadDashboardMetrics() {
-        // Load all products
         List<Product> allProducts = dbHelper.getAllProducts();
         tvTotalProducts.setText(String.valueOf(allProducts.size()));
 
-        // Show product names
         StringBuilder productNames = new StringBuilder();
         for (Product p : allProducts) {
             productNames.append("• ").append(p.getName()).append("\n");
         }
         tvProductNames.setText(productNames.toString());
 
-        // Load all sales
         List<Sale> allSales = dbHelper.getAllSales();
         tvTotalSales.setText(String.valueOf(allSales.size()));
 
-        // Show sales details
         StringBuilder salesDetails = new StringBuilder();
         for (Sale s : allSales) {
             Product product = dbHelper.getProductById(s.getProductId());
@@ -79,7 +72,6 @@ public class DashboardFragment extends Fragment {
         }
         tvSalesNames.setText(salesDetails.toString());
 
-        // Low stock products
         List<Product> lowStockProducts = allProducts.stream()
                 .filter(p -> p.getStock() < 5)
                 .toList();
