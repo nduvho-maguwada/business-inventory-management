@@ -8,10 +8,10 @@ public class Product {
     private int stock;
     private String category;
 
-    // Default constructor
+
     public Product() {}
 
-    // Full constructor
+
     public Product(int id, String name, double price, double costPrice, int stock, String category) {
         this.id = id;
         this.name = name;
