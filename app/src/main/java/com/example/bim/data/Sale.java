@@ -1,5 +1,5 @@
 package com.example.bim.data;
-
+//Nduvho Maguwada 402306070
 public class Sale {
     private int id;
     private int productId;
@@ -7,10 +7,9 @@ public class Sale {
     private double total;
     private long saleDate;
 
-    // Default constructor
+
     public Sale() {}
 
-    // Full constructor
     public Sale(int id, int productId, int quantity, double total, long saleDate) {
         this.id = id;
         this.productId = productId;
