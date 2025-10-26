@@ -1,5 +1,5 @@
 package com.example.bim.data;
-
+//Nduvho Maguwada 402306070
 public class Product {
     private int id;
     private String name;
